@@ -1,0 +1,52 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Ortak Futbolcu</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--pitch:#12372a;--line:#e9efe6;--card:#f2c230;--ink:#0d2219;--bad:#c4452f;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--pitch);color:var(--line);font:400 17px/1.5 Barlow,system-ui,sans-serif;display:grid;place-items:center;padding:20px}
+main{width:min(560px,100%);border:2px solid var(--line);border-radius:6px;padding:28px;position:relative}
+main::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:2px solid var(--line);opacity:.18;pointer-events:none}
+h1,.team,.score{font-family:'Barlow Condensed',Impact,sans-serif;font-weight:800;letter-spacing:.01em}
+h1{font-size:44px;margin:0 0 4px}.sub{opacity:.75;margin:0 0 20px}
+input,button{font:inherit;border-radius:4px;border:2px solid var(--line);padding:11px 14px;background:transparent;color:var(--line);width:100%;margin-top:10px}
+button{background:var(--card);color:var(--ink);border-color:var(--card);font-weight:600;cursor:pointer}button.alt{background:transparent;color:var(--line);border-color:var(--line)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--card);outline-offset:2px}
+.row{display:flex;gap:10px}.hide{display:none}.teams{display:flex;align-items:center;gap:12px;text-align:center;margin:18px 0;position:relative}
+.team{flex:1;font-size:34px;line-height:1.05}.vs{opacity:.5}.score{font-size:26px;display:flex;justify-content:space-between}
+.bar{height:6px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;background:var(--card);transform-origin:left}
+#msg{min-height:26px;margin-top:8px;font-weight:600}a{color:var(--card)}ul{padding-left:20px;margin:6px 0}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:transform .2s linear}}
+</style></head><body><main>
+<section id="lobby"><h1>Ortak Futbolcu</h1><p class="sub">İki takımda da oynamış futbolcuyu rakibinden önce bul.</p>
+<input id="name" placeholder="Adın" maxlength="16" autocomplete="nickname">
+<button id="quick">Rastgele rakip bul</button>
+<div class="row"><button class="alt" id="create">Oda kur</button><input id="code" placeholder="Oda kodu" maxlength="4" style="margin-top:10px;text-transform:uppercase"><button class="alt" id="join" style="width:auto;white-space:nowrap">Katıl</button></div>
+<p id="lmsg" class="sub"></p></section>
+<section id="game" class="hide"><div class="score"><span id="s0"></span><span id="s1"></span></div>
+<div class="teams"><div class="team" id="ta"></div><div class="vs">/</div><div class="team" id="tb"></div></div>
+<div class="bar"><i id="bar"></i></div>
+<form id="f"><input id="guess" placeholder="Futbolcu adı yaz" autocomplete="off"><button>Gönder</button></form>
+<div id="msg" aria-live="polite"></div><div id="res"></div><button class="alt hide" id="again" onclick="location.reload()">Yeni oyun</button></section>
+</main>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const $=id=>document.getElementById(id),s=io(),nm=()=>$('name').value.trim()||'Oyuncu';let end=0,raf;
+const show=g=>{$('lobby').classList.toggle('hide',g);$('game').classList.toggle('hide',!g)};
+$('quick').onclick=()=>{s.emit('quick',nm());$('lmsg').textContent='Rakip bekleniyor…'};
+$('create').onclick=()=>s.emit('create',nm());
+$('join').onclick=()=>s.emit('join',$('code').value,nm());
+s.on('room',c=>$('lmsg').textContent='Oda kodu: '+c+' (arkadaşına gönder, bekleniyor…)');
+s.on('err',m=>$('lmsg').textContent=m);
+const sc=l=>{$('s0').textContent=l[0].name+' '+l[0].score;$('s1').textContent=(l[1]?l[1].score+' '+l[1].name:'')};
+s.on('matched',l=>{show(true);sc(l);$('msg').textContent='Rakip bulundu, başlıyoruz…'});
+s.on('round',d=>{sc(d.scores);$('ta').textContent=d.a;$('tb').textContent=d.b;$('res').innerHTML='';$('msg').textContent='';
+ $('guess').value='';$('guess').disabled=false;$('guess').focus();end=Date.now()+d.ms;
+ cancelAnimationFrame(raf);(function t(){const k=Math.max(0,(end-Date.now())/d.ms);$('bar').style.transform='scaleX('+k+')';if(k>0)raf=requestAnimationFrame(t)})()});
+$('f').onsubmit=e=>{e.preventDefault();s.emit('guess',$('guess').value);$('guess').select()};
+s.on('guessResult',ok=>{$('msg').textContent=ok?'Doğru! Rakibin cevabı gizli, süre bitince sonuç açılır.':'Yanlış, tekrar dene.';if(ok)$('guess').disabled=true});
+s.on('roundEnd',d=>{sc(d.scores);$('guess').disabled=true;cancelAnimationFrame(raf);
+ const w=d.ok[0]===d.ok[1]?'Puan yok.':(d.ok[0]?d.scores[0].name:d.scores[1].name)+' puanı aldı.';
+ $('msg').textContent=w;$('res').innerHTML='<p class="sub">Doğru cevaplar ('+d.total+'):</p><ul>'+d.answers.map(a=>'<li><a target="_blank" rel="noopener" href="'+a.url+'">'+a.name+'</a></li>').join('')+'</ul>';
+ if(d.winner>=0){$('msg').textContent=d.scores[d.winner].name+' kazandı!';$('again').classList.remove('hide')}});
+s.on('left',()=>{$('msg').textContent='Rakip ayrıldı.';$('again').classList.remove('hide')});
+</script></body></html>

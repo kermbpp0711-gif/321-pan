@@ -1,0 +1,5 @@
+{"name":"ortak-futbolcu","version":"2.0.0","private":true,
+"scripts":{"start":"node server.js","build:db":"node scripts/build-db.js"},
+"engines":{"node":">=18"},
+"dependencies":{"express":"^4.19.2","socket.io":"^4.7.5"},
+"devDependencies":{"csv-parse":"^5.5.6"}}

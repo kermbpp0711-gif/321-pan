@@ -1,0 +1,17 @@
+[
+{"id":11,"name":"Arsenal","league":"EN"},{"id":631,"name":"Chelsea","league":"EN"},{"id":31,"name":"Liverpool","league":"EN"},
+{"id":281,"name":"Manchester City","league":"EN"},{"id":985,"name":"Manchester United","league":"EN"},{"id":148,"name":"Tottenham","league":"EN"},
+{"id":762,"name":"Newcastle","league":"EN"},{"id":405,"name":"Aston Villa","league":"EN"},{"id":379,"name":"West Ham","league":"EN"},
+{"id":418,"name":"Real Madrid","league":"ES"},{"id":131,"name":"Barcelona","league":"ES"},{"id":13,"name":"Atlético Madrid","league":"ES"},
+{"id":368,"name":"Sevilla","league":"ES"},{"id":1049,"name":"Valencia","league":"ES"},{"id":1050,"name":"Villarreal","league":"ES"},
+{"id":681,"name":"Real Sociedad","league":"ES"},{"id":621,"name":"Athletic Bilbao","league":"ES"},{"id":150,"name":"Real Betis","league":"ES"},
+{"id":506,"name":"Juventus","league":"IT"},{"id":46,"name":"Inter","league":"IT"},{"id":5,"name":"Milan","league":"IT"},
+{"id":6195,"name":"Napoli","league":"IT"},{"id":12,"name":"Roma","league":"IT"},{"id":398,"name":"Lazio","league":"IT"},
+{"id":800,"name":"Atalanta","league":"IT"},{"id":430,"name":"Fiorentina","league":"IT"},
+{"id":27,"name":"Bayern Münih","league":"DE"},{"id":16,"name":"Dortmund","league":"DE"},{"id":15,"name":"Leverkusen","league":"DE"},
+{"id":23826,"name":"RB Leipzig","league":"DE"},{"id":33,"name":"Schalke 04","league":"DE"},{"id":82,"name":"Wolfsburg","league":"DE"},
+{"id":24,"name":"Eintracht Frankfurt","league":"DE"},{"id":18,"name":"Gladbach","league":"DE"},
+{"id":583,"name":"PSG","league":"FR"},{"id":244,"name":"Marseille","league":"FR"},{"id":1041,"name":"Lyon","league":"FR"},
+{"id":162,"name":"Monaco","league":"FR"},{"id":1082,"name":"Lille","league":"FR"},
+{"id":141,"name":"Galatasaray","league":"TR"},{"id":36,"name":"Fenerbahçe","league":"TR"},{"id":114,"name":"Beşiktaş","league":"TR"},{"id":449,"name":"Trabzonspor","league":"TR"}
+]
